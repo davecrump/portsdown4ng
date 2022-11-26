@@ -37,7 +37,7 @@ if [ $? != 0 ]; then
     echo "Continuing build......"
     BuildLogMsg "0" "Warning, NOT BULLSEYE OS"
   else
-    BuildLogMsg "0" "Exiting, NOT BULLSEYE OS"
+    BuildLogMsg "1" "Exiting, NOT BULLSEYE OS"
     exit
   fi
 fi
@@ -59,7 +59,9 @@ elif [ "$1" == "-u" -a ! -z "$2" ]; then
     exit 1;
   fi
   echo "ok!";
+  BuildLogMsg "0" "Installing ${GIT_SRC} Version"
 else
+  GIT_SRC="britishamateurtelevisionclub";
   echo
   echo "----------------------------------------------------------------"
   echo "----- Installing BATC Production version of Portsdown 4 NG -----"
@@ -150,10 +152,11 @@ SUCCESS=$?; BuildLogMsg $SUCCESS "libavahi-client-dev install"
 # Install LimeSuite 22.09.1 as at 24 Nov 22
 # Commit 475964c80459f338de337524dd9085d87cba1c9e
 echo
-echo "--------------------------------------"
-echo "----- Installing LimeSuite 20.10 -----"
-echo "--------------------------------------"
+echo "----------------------------------------"
+echo "----- Installing LimeSuite 22.09.1 -----"
+echo "----------------------------------------"
 wget https://github.com/myriadrf/LimeSuite/archive/475964c80459f338de337524dd9085d87cba1c9e.zip -O master.zip
+SUCCESS=$?; BuildLogMsg $SUCCESS "LimeSuite Download"
 unzip -o master.zip
 cp -f -r LimeSuite-475964c80459f338de337524dd9085d87cba1c9e LimeSuite
 rm -rf LimeSuite-475964c80459f338de337524dd9085d87cba1c9e
@@ -164,7 +167,9 @@ cd LimeSuite/
 mkdir dirbuild
 cd dirbuild/
 cmake ../
+SUCCESS=$?; BuildLogMsg $SUCCESS "LimeSuite cmake"
 make
+SUCCESS=$?; BuildLogMsg $SUCCESS "LimeSuite make"
 sudo make install
 sudo ldconfig
 cd /home/pi
@@ -189,11 +194,13 @@ echo "------------------------------------------------------"
 mkdir -p /home/pi/.local/share/LimeSuite/images/20.10/
 wget https://downloads.myriadrf.org/project/limesuite/20.10/LimeSDR-Mini_HW_1.2_r1.30.rpd -O \
                /home/pi/.local/share/LimeSuite/images/20.10/LimeSDR-Mini_HW_1.2_r1.30.rpd
+SUCCESS=$?; BuildLogMsg $SUCCESS "LimeMini Firmware 1.30 Download"
 
 # DVB-S/S2 Version
 mkdir -p /home/pi/.local/share/LimeSuite/images/v0.3
 wget https://github.com/natsfr/LimeSDR_DVBSGateware/releases/download/v0.3/LimeSDR-Mini_lms7_trx_HW_1.2_auto.rpd -O \
  /home/pi/.local/share/LimeSuite/images/v0.3/LimeSDR-Mini_lms7_trx_HW_1.2_auto.rpd
+SUCCESS=$?; BuildLogMsg $SUCCESS "LimeMini DVB Firmware Download"
 
 echo
 echo "-------------------------------------------"
@@ -203,9 +210,12 @@ echo "-------------------------------------------"
 # Install libiio for Pluto SigGen (and Langstone)
 cd /home/pi
 git clone https://github.com/analogdevicesinc/libiio.git
+SUCCESS=$?; BuildLogMsg $SUCCESS "libiio git clone"
 cd libiio
 cmake ./
+SUCCESS=$?; BuildLogMsg $SUCCESS "libiio cmake"
 make all
+SUCCESS=$?; BuildLogMsg $SUCCESS "libiio make"
 sudo make install
 cd /home/pi
 
@@ -216,12 +226,57 @@ echo "----- Downloading Portsdown 4 NG Software -----"
 echo "-----------------------------------------------"
 wget https://github.com/${GIT_SRC}/portsdown4/archive/main.zip
 SUCCESS=$?; BuildLogMsg $SUCCESS "Portsdown 4 NG GitHub download"
-
 # Unzip the portsdown software and copy to the Pi
 unzip -o main.zip
 mv portsdown4-main portsdown
 rm main.zip
 cd /home/pi
+
+# Install limesdr_toolbox
+echo
+echo "--------------------------------------"
+echo "----- Installing LimeSDR Toolbox -----"
+echo "--------------------------------------"
+cd /home/pi/portsdown/src/limesdr_toolbox/libdvbmod/libdvbmod
+make
+SUCCESS=$?; BuildLogMsg $SUCCESS "libdvbmod make"
+cd ../DvbTsToIQ/
+make
+SUCCESS=$?; BuildLogMsg $SUCCESS "dvb2iq make"
+cp dvb2iq /home/pi/portsdown/bin/
+cd /home/pi/portsdown/src/limesdr_toolbox/
+make 
+SUCCESS=$?; BuildLogMsg $SUCCESS "limesdr_toolbox make"
+cp limesdr_send /home/pi/portsdown/bin/
+cp limesdr_dump /home/pi/portsdown/bin/
+cp limesdr_stopchannel /home/pi/portsdown/bin/
+cp limesdr_forward /home/pi/portsdown/bin/
+make dvb
+SUCCESS=$?; BuildLogMsg $SUCCESS "limesdr_dvb make"
+cp limesdr_dvb /home/pi/portsdown/bin/
+cd /home/pi
+
+
+# Record Version Number
+
+cd /home/pi/portsdown
+head -c 9 version_history.txt > installed_version.txt
+echo -e "\n" >> installed_version.txt
+cd /home/pi
+
+echo
+echo "SD Card Serial:"
+cat /sys/block/mmcblk0/device/cid
+
+# Reboot
+echo
+echo "--------------------------------"
+echo "----- Complete.  Rebooting -----"
+echo "--------------------------------"
+sleep 1
+
+sudo reboot now
+exit
 
 
 
