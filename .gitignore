@@ -1,0 +1,10 @@
+*~
+*.swp
+*.bak
+*.inc
+*.o
+*.so
+*.a
+bin/*
+installed_version.txt
+
