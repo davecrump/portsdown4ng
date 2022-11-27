@@ -1,0 +1,7 @@
+# Main Config file for Portsdown 4 NG
+
+display=Element14_7
+menulanguage=en
+startup=Display_boot
+webcontrol=enabled
+langstone=v2pluto

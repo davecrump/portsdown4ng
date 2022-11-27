@@ -11,15 +11,13 @@ BuildLogMsg() {
 }
 
 # Create first entry for the build and update logs
-sudo mkdir /var/log/rptr
 echo $(date -u) "New Build started" | sudo tee -a /home/pi/p4ng_initial_build_log.txt  > /dev/null
-
 
 # Check current user
 whoami | grep -q pi
 if [ $? != 0 ]; then
   echo "Install must be performed as user pi"
-  BuildLogMsg "0" "Exiting, not user pi"
+  BuildLogMsg "1" "Exiting, not user pi"
   exit
 fi
 
@@ -41,7 +39,6 @@ if [ $? != 0 ]; then
     exit
   fi
 fi
-
 
 if [ "$1" == "-d" ]; then
   GIT_SRC="davecrump";
@@ -146,8 +143,21 @@ SUCCESS=$?; BuildLogMsg $SUCCESS "libaio-dev install"
 sudo apt-get -y install libavahi-client-dev
 SUCCESS=$?; BuildLogMsg $SUCCESS "libavahi-client-dev install"
 
+echo
+echo "------------------------------------------"
+echo "----- Setting up for captured images -----"
+echo "------------------------------------------"
 
+# Amend /etc/fstab to create a tmpfs drive at ~/tmp for multiple images (201708150)
+sudo sed -i '4itmpfs           /home/pi/tmp    tmpfs   defaults,noatime,nosuid,size=10m  0  0' /etc/fstab
+SUCCESS=$?; BuildLogMsg $SUCCESS "Created ~/tmp ramdrive"
 
+# Create a ~/snaps folder for captured images (201708150)
+mkdir /home/pi/snaps
+SUCCESS=$?; BuildLogMsg $SUCCESS "Created ~/snaps folder"
+
+# Set the image index number to 0 (201708150)
+echo "0" > /home/pi/snaps/snap_index.txt
 
 # Install LimeSuite 22.09.1 as at 24 Nov 22
 # Commit 475964c80459f338de337524dd9085d87cba1c9e
@@ -224,13 +234,15 @@ echo
 echo "-----------------------------------------------"
 echo "----- Downloading Portsdown 4 NG Software -----"
 echo "-----------------------------------------------"
-wget https://github.com/${GIT_SRC}/portsdown4/archive/main.zip
+wget https://github.com/${GIT_SRC}/portsdown4ng/archive/main.zip
 SUCCESS=$?; BuildLogMsg $SUCCESS "Portsdown 4 NG GitHub download"
 # Unzip the portsdown software and copy to the Pi
 unzip -o main.zip
-mv portsdown4-main portsdown
+mv portsdown4ng-main portsdown
 rm main.zip
 cd /home/pi
+
+mkdir -p /home/pi/portsdown/bin   # May not be in download
 
 # Install limesdr_toolbox
 echo
@@ -256,12 +268,21 @@ SUCCESS=$?; BuildLogMsg $SUCCESS "limesdr_dvb make"
 cp limesdr_dvb /home/pi/portsdown/bin/
 cd /home/pi
 
+# Set auto login to command line.
+sudo raspi-config nonint do_boot_behaviour B2
+
+# Modify .bashrc to run startup script on ssh logon
+echo if test -z \"\$SSH_CLIENT\" >> ~/.bashrc 
+echo then >> ~/.bashrc
+echo "  source /home/pi/portsdown/scripts/startup.sh" >> ~/.bashrc
+echo fi >> ~/.bashrc
 
 # Record Version Number
+head -c 9 version_history.txt > /home/pi/portsdown/installed_version.txt
+echo -e "\n" >> /home/pi/portsdown/installed_version.txt
+head -c 9 version_history.txt > /home/pi/p4ng_initial_build_log.txt
+echo -e "Install script finished\n" >> /home/pi/p4ng_initial_build_log.txt
 
-cd /home/pi/portsdown
-head -c 9 version_history.txt > installed_version.txt
-echo -e "\n" >> installed_version.txt
 cd /home/pi
 
 echo
@@ -277,9 +298,3 @@ sleep 1
 
 sudo reboot now
 exit
-
-
-
-
-
-
