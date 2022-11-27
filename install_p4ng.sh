@@ -12,6 +12,7 @@ BuildLogMsg() {
 
 # Create first entry for the build and update logs
 echo $(date -u) "New Build started" | sudo tee -a /home/pi/p4ng_initial_build_log.txt  > /dev/null
+sudo chown pi:pi /home/pi/p4ng_initial_build_log.txt
 
 # Check current user
 whoami | grep -q pi
@@ -278,9 +279,9 @@ echo "  source /home/pi/portsdown/scripts/startup.sh" >> ~/.bashrc
 echo fi >> ~/.bashrc
 
 # Record Version Number
-head -c 9 version_history.txt > /home/pi/portsdown/installed_version.txt
+head -c 9 /home/pi/portsdown/version_history.txt > /home/pi/portsdown/installed_version.txt
 echo -e "\n" >> /home/pi/portsdown/installed_version.txt
-head -c 9 version_history.txt > /home/pi/p4ng_initial_build_log.txt
+head -c 9 /home/pi/portsdown/version_history.txt > /home/pi/p4ng_initial_build_log.txt
 echo -e "Install script finished\n" >> /home/pi/p4ng_initial_build_log.txt
 
 cd /home/pi

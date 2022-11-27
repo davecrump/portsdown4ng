@@ -2,6 +2,6 @@
 
 display=Element14_7
 menulanguage=en
-startup=Display_boot
+startup=rptr
 webcontrol=enabled
 langstone=v2pluto
