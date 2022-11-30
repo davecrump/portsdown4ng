@@ -102,10 +102,8 @@ case "$MODE_STARTUP" in
     #return
   ;;
   rptr)
-    # Start the Repeater
-    #if [ "$SESSION_TYPE" == "boot" ]; then
-      (sleep 10; /home/pi/portsdown/scripts/rptr.sh) &
-    #fi
+    sudo pigpiod
+      (sleep 5; /home/pi/portsdown/scripts/rptr.sh) &
     return
   ;;
   *)
