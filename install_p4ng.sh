@@ -291,7 +291,7 @@ echo "alias stop='/home/pi/portsdown/scripts/stop.sh'" >> /home/pi/.bash_aliases
 # Record Version Number
 head -c 9 /home/pi/portsdown/version_history.txt > /home/pi/portsdown/installed_version.txt
 echo -e "\n" >> /home/pi/portsdown/installed_version.txt
-head -c 9 /home/pi/portsdown/version_history.txt > /home/pi/p4ng_initial_build_log.txt
+head -c 9 /home/pi/portsdown/version_history.txt >> /home/pi/p4ng_initial_build_log.txt
 echo -e "Install script finished\n" >> /home/pi/p4ng_initial_build_log.txt
 
 cd /home/pi
