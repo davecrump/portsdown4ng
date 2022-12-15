@@ -72,7 +72,7 @@ sudo killall limesdr_dvb                      # Kill limesdr_dvb if running
 
 sleep 5                                       # Give time for everything to settle
 
-/home/pi/portsdown/bin/limesdr_stopchannel    # stop the limesdr
+/home/pi/portsdown/bin/limesdr_stopchannel &  # stop the limesdr
 
 /home/pi/portsdown/scripts/rptr.sh &          # fork repeater start in a new process
 
