@@ -70,12 +70,6 @@ do_autostart_setup()
   Radio4=OFF
   Radio5=OFF
   Radio6=OFF
-  Radio7=OFF
-  Radio8=OFF
-  Radio9=OFF
-  Radio10=OFF
-  Radio11=OFF
-  Radio12=OFF
 
   case "$MODE_STARTUP" in
     Prompt)

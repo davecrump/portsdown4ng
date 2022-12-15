@@ -3,31 +3,28 @@
 # TX parameters
 freqoutput=1255
 symbolrate=1000
-modulation=S2QPSK
-fec=23
+modulation=DVBS2
+constellation=QPSK
+fec=2/3
 pilots=off
 frames=long
 guard=32
 qam=qpsk
-outputdevice=limedvb
+outputdevice=limemini
 band=d3
 labelofband=70_cm
 
 # TS Parameters
 encoding=H264
 format=16:9
-pidstart=256
+pidpmtstart=4095
 pidvideo=256
 pidaudio=257
-pidpmt=4095
-serviceid=1
 call=GB3HV
 serviceprovider=IO91CC
-videoinput=linkpi
-audioinput=auto
 
 # Output Device Parameters
-limegain=98
+limegain=95
 plutoip=192.168.4.1
 plutopwr=10
 expports=2
@@ -38,7 +35,9 @@ udpoutaddr=192.168.2.139
 udpoutport=10000
 
 # Input Device Parameters
-linkpiip=192.168.2.141
+videosource=linkpi_srt
+audiosource=auto
+linkpiip=192.168.2.140
 linkpiport=9001
 udpinaddr=192.168.2.139
 udpinport=10000
