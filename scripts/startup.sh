@@ -31,17 +31,15 @@ EOF
 
 ######################### Start here #####################
 
+# Start the gpio control daemon
+sudo pigpiod
+
 # Read the desired start-up behaviour
 MODE_STARTUP=$(get_config_var startup $PMAINCONFIGFILE)
 
-# If pi-sdn is not running, check if it is required to run
-#ps -cax | grep 'pi-sdn' >/dev/null 2>/dev/null
-#RESULT="$?"
-#if [ "$RESULT" -ne 0 ]; then
-#  if [ -f /home/pi/.pi-sdn ]; then
-#    . /home/pi/.pi-sdn
-#  fi
-#fi
+# Start pi-sdn which will exit if not required
+sleep 1
+/home/pi/portsdown/bin/pi-sdn 22 27 &
 
 # Facility to Disable WiFi
 # Calls .wifi_off if present and runs "sudo ip link set wlan0 down"
@@ -102,8 +100,7 @@ case "$MODE_STARTUP" in
     #return
   ;;
   rptr)
-    sudo pigpiod
-      (sleep 5; /home/pi/portsdown/scripts/rptr.sh) &
+    (sleep 5; /home/pi/portsdown/scripts/rptr.sh) &
     return
   ;;
   *)

@@ -86,8 +86,8 @@ fi
 
 ################### CLEAN UP ############################################
 
-sudo killall ffmpeg
-sudo killall limesdr_dvb
+sudo killall ffmpeg >/dev/null 2>/dev/null
+sudo killall limesdr_dvb >/dev/null 2>/dev/null
 sleep 1
 $PATHBIN"/limesdr_stopchannel"    # stop the limesdr
 sudo rm videots >/dev/null 2>/dev/null

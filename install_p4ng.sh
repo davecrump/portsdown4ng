@@ -269,6 +269,17 @@ SUCCESS=$?; BuildLogMsg $SUCCESS "limesdr_dvb make"
 cp limesdr_dvb /home/pi/portsdown/bin/
 cd /home/pi
 
+# Compile and Install pi-sdn
+echo
+echo "-----------------------------"
+echo "----- Installing pi-sdn -----"
+echo "-----------------------------"
+cd /home/pi/portsdown/src/pi-sdn
+make
+SUCCESS=$?; BuildLogMsg $SUCCESS "pi-sdn"
+cp pi-sdn /home/pi/portsdown/bin/
+cd /home/pi
+
 # Set auto login to command line.
 sudo raspi-config nonint do_boot_behaviour B2
 
