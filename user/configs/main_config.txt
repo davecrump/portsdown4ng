@@ -1,5 +1,6 @@
 # Main Config file for Portsdown 4 NG
 
+sdbutton=activehi
 display=Element14_7
 menulanguage=en
 startup=rptr
